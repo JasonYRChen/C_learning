@@ -1,14 +1,14 @@
-/* This is a space to learn C */
+/* a dumb note */
 
-# include <stdio.h> 
+# include <stdio.h>
+# include <stdlib.h>
 
-int main()
-{
-    char ex[10];
+int main() {
+    char number[3];
 
-    puts("Enter: ");
-    scanf("%3s", ex);
-    printf("This is your message: %s", ex); 
+    puts("Enter a number: ");
+    scanf("%10s", number);
+    printf("Your call: %i", atoi(number));
 
     return 0;
 }
