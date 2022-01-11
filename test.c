@@ -4,11 +4,11 @@
 # include <stdlib.h>
 
 int main() {
-    char number[3];
+    int number;
 
     puts("Enter a number: ");
-    scanf("%10s", number);
-    printf("Your call: %i", atoi(number));
+    scanf("%i", &number);
+    printf("Your call: %i", number);
 
     return 0;
 }
