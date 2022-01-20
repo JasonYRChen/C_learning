@@ -1,21 +1,33 @@
 # include <stdio.h>
 
-void nav(int *lat, int *lon, int lat_incr, int lon_incr)
+int counter(char *msg)
 {
-    *lat = *lat + lat_incr;
-    *lon = *lon + lon_incr;
+    int count = 0;
+
+    while (*msg != '\0') {
+        count++;
+        msg++;
+    }
+    return count;
 }
 
 int main()
 {
-    int lat = 87;
-    int lon = 65;
+    char msg[6]; 
+    int count;
 
-    printf("Original latitude: %i\n", lat);
-    printf("Original lontitude: %i\n", lon);
-    nav(&lat, &lon, -3, 6);
-    printf("New latitude: %i\n", lat);
-    printf("New lontitude: %i\n", lon);
+    do {
+        puts("Enter:");
+        scanf("%5s", msg);
+        if (!(msg[0] == 'X' && msg[1] == '\0')) {
+            count = counter(msg);
+            printf("Your message: %s\n", msg);
+            printf("size: %i\n", count);
+            printf("Hidden message: %s\n", msg + count + 1);
+        } else
+            printf("Bye bye");
+    } while (!(msg[0] == 'X' && msg[1] == '\0'));
 
     return 0;
 }
+
