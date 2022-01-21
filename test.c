@@ -1,32 +1,21 @@
 # include <stdio.h>
 
-int counter(char *msg)
-{
-    int count = 0;
-
-    while (*msg != '\0') {
-        count++;
-        msg++;
-    }
-    return count;
-}
-
 int main()
 {
-    char msg[6]; 
-    int count;
+    char first_name[20];
+    char last_name[20];
+    int year;
+    int month;
+    int day;
 
-    do {
-        puts("Enter:");
-        scanf("%5s", msg);
-        if (!(msg[0] == 'X' && msg[1] == '\0')) {
-            count = counter(msg);
-            printf("Your message: %s\n", msg);
-            printf("size: %i\n", count);
-            printf("Hidden message: %s\n", msg + count + 1);
-        } else
-            printf("Bye bye");
-    } while (!(msg[0] == 'X' && msg[1] == '\0'));
+    puts("Enter your name (first last):");
+    scanf("%19s %19s", first_name, last_name);
+    puts("Enter your year of birth (yyyy mm dd):");
+    scanf("%i %i %i", &year, &month, &day);
+
+    puts("Your profiles:");
+    printf("Name: %s, %s\n", first_name, last_name);
+    printf("Birthday: %i/%i/%i\n", year, month, day);
 
     return 0;
 }
