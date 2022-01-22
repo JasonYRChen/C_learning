@@ -1,30 +1,45 @@
 # include <stdio.h>
 # include <string.h>
 
-int search_name(char *name, char *names, int row, int col)
+void reverse(char *word, char *reversed)
 {
+    int end = strlen(word);
     int i;
-    for (i=0; i<row; i++) {
-        char *address = names + i * col;
-        if (strstr(address, name)) 
-            return i;
+
+    for (i=0; i<end; i++) {
+        reversed[i] = word[end - 1 - i];
     }
-    return -1;
+}
+
+void reverse_in_place(char *word)
+{
+    int end = strlen(word);
+    int i;
+    int mid;
+    
+    if ((float)end / 2 > end / 2)
+        mid = end / 2 + 1;
+    else
+        mid = end / 2;
+
+    for (i=0; i<mid; i++) {
+        char temp = word[i];
+        word[i] = word[end - 1 - i];
+        word[end - 1 - i] = temp;
+    }
 }
 
 int main()
 {
-    char names[][10] = {"Jason", "Ian", "Steve", "Dora"};
-    int track;
-    char name[10];
+    char word[10];
+    char reversed[10];
 
-    puts("What do you want to search:");
-    scanf("%9s", name);
-    track = search_name(name, names, 4, 10);
-    if (track == -1)
-        printf("Track not found.");
-    else
-        printf("On track %i", track);
+    puts("enter a word:");
+    scanf("%9s", word);
+    reverse(word, reversed);
+    reverse_in_place(word);
+    printf("Reversed with copied: %s\n", reversed);
+    printf("Reversed in place: %s\n", word);
 
     return 0;
 }
