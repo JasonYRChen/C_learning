@@ -1,21 +1,30 @@
 # include <stdio.h>
+# include <string.h>
+
+int search_name(char *name, char *names, int row, int col)
+{
+    int i;
+    for (i=0; i<row; i++) {
+        char *address = names + i * col;
+        if (strstr(address, name)) 
+            return i;
+    }
+    return -1;
+}
 
 int main()
 {
-    char first_name[20];
-    char last_name[20];
-    int year;
-    int month;
-    int day;
+    char names[][10] = {"Jason", "Ian", "Steve", "Dora"};
+    int track;
+    char name[10];
 
-    puts("Enter your name (first last):");
-    scanf("%19s %19s", first_name, last_name);
-    puts("Enter your year of birth (yyyy mm dd):");
-    scanf("%i %i %i", &year, &month, &day);
-
-    puts("Your profiles:");
-    printf("Name: %s, %s\n", first_name, last_name);
-    printf("Birthday: %i/%i/%i\n", year, month, day);
+    puts("What do you want to search:");
+    scanf("%9s", name);
+    track = search_name(name, names, 4, 10);
+    if (track == -1)
+        printf("Track not found.");
+    else
+        printf("On track %i", track);
 
     return 0;
 }
