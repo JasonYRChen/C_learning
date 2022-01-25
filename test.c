@@ -1,45 +1,21 @@
 # include <stdio.h>
-# include <string.h>
-
-void reverse(char *word, char *reversed)
-{
-    int end = strlen(word);
-    int i;
-
-    for (i=0; i<end; i++) {
-        reversed[i] = word[end - 1 - i];
-    }
-}
-
-void reverse_in_place(char *word)
-{
-    int end = strlen(word);
-    int i;
-    int mid;
-    
-    if ((float)end / 2 > end / 2)
-        mid = end / 2 + 1;
-    else
-        mid = end / 2;
-
-    for (i=0; i<mid; i++) {
-        char temp = word[i];
-        word[i] = word[end - 1 - i];
-        word[end - 1 - i] = temp;
-    }
-}
 
 int main()
 {
-    char word[10];
-    char reversed[10];
+    float longitude;
+    float latitude;
+    char info[80];
+    int start = 0;
 
-    puts("enter a word:");
-    scanf("%9s", word);
-    reverse(word, reversed);
-    reverse_in_place(word);
-    printf("Reversed with copied: %s\n", reversed);
-    printf("Reversed in place: %s\n", word);
+    puts("data=[");
+    while (3 == scanf("%f,%f,%79[^\n]", &longitude, &latitude, info)) {
+        if (start)
+            printf(",\n");
+        else
+            start = 1;
+        printf("{latitude: %f, longitude: %f, info: '%s'}", latitude, longitude, info);
+    }
+    puts("\n]");
 
     return 0;
 }
