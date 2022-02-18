@@ -3,14 +3,19 @@
 
 int main()
 {
-    char msg[] = "This is a msg.";
-    int code = 15;
+    char msg[100];
+    int code;
 
-    printf("Origianl msg: %s\n", msg);
+    printf("Enter the message to encrypt: ");
+    scanf("%99[^\n]", msg);
+    printf("Enter the encrypt code: ");
+    scanf("%i", &code);
+
+    printf("Original message : %s\n", msg);
     encrypt(msg, code);
-    printf("Encrypt msg : %s\n", msg);
+    printf("Encrypted message: %s\n", msg);
     descrypt(msg, code);
-    printf("Descrypt msg: %s\n", msg);
+    printf("Recovered message: %s\n", msg);
 
     return 0;
 }
