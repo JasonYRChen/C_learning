@@ -1,21 +1,33 @@
 #include <stdio.h>
-#include "header.h"
+
+typedef struct {
+    int a;
+    int b;
+    int (*func)(int, int);
+} function;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int sub(int a, int b)
+{
+    return a - b;
+}
+
+void calculation(function *func)
+{
+    printf("result: %i\n", func->func(func->a, func->b));
+}
 
 int main()
 {
-    char msg[100];
-    int code;
+    function func_a = {5, 3, add};
+    function func_b = {5, 3, sub};
 
-    printf("Enter the message to encrypt: ");
-    scanf("%99[^\n]", msg);
-    printf("Enter the encrypt code: ");
-    scanf("%i", &code);
-
-    printf("Original message : %s\n", msg);
-    encrypt(msg, code);
-    printf("Encrypted message: %s\n", msg);
-    descrypt(msg, code);
-    printf("Recovered message: %s\n", msg);
+    calculation(&func_a);
+    calculation(&func_b);
 
     return 0;
 }
