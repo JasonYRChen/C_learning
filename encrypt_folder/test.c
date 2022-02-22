@@ -1,22 +1,15 @@
 #include <stdio.h>
-#include "header.h"
 
 int main()
 {
-    char msg[100];
-    int code;
+    char msg[] = "This is a msg.";
+    int code = 15;
 
-    printf("Enter the message to encrypt: ");
-    scanf("%99[^\n]", msg);
-    printf("Enter the encrypt code: ");
-    scanf("%i", &code);
-
-    printf("Original message : %s\n", msg);
+    printf("Origianl msg: %s\n", msg);
     encrypt(msg, code);
-    printf("Encrypted message: %s\n", msg);
+    printf("Encrypt msg : %s\n", msg);
     descrypt(msg, code);
-    printf("Recovered message: %s\n", msg);
+    printf("Descrypt msg: %s\n", msg);
 
     return 0;
 }
-
