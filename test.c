@@ -1,21 +1,41 @@
 #include <stdio.h>
-#include "header.h"
+#include <unistd.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+#include "./error_folder/error.h"
 
 int main()
 {
-    char msg[100];
-    int code;
+    int tunnel[2];
+    char url[100];
+    if (pipe(tunnel) == -1)
+        error("Create pipe error");
 
-    printf("Enter the message to encrypt: ");
-    scanf("%99[^\n]", msg);
-    printf("Enter the encrypt code: ");
-    scanf("%i", &code);
+    char *msg[] = {"http://www.google.com", "http://www.apple.com"};
 
-    printf("Original message : %s\n", msg);
-    encrypt(msg, code);
-    printf("Encrypted message: %s\n", msg);
-    descrypt(msg, code);
-    printf("Recovered message: %s\n", msg);
+    pid_t pid = fork();
+
+    if (pid == -1)
+        error("Unseccessful fork");
+
+    if (!pid) {
+        close(tunnel[0]);
+        dup2(tunnel[1], 1);
+    } else {
+        close(tunnel[1]);
+        dup2(tunnel[0], 0);
+    }
+
+    for (int i=0; i<2; i++) {
+        if (!pid) {
+            printf("%s\n", msg[i]);
+        } else {
+            char command[105];
+            fgets(url, 100, stdin);
+            sprintf(command, "%s %s", "open", url);
+            system(command);
+        }
+    }
 
     return 0;
 }
