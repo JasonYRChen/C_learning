@@ -1,41 +1,70 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/wait.h>
 #include <stdlib.h>
-#include "./error_folder/error.h"
+#include <time.h>
+#include <signal.h>
+#include <errno.h>
+#include <string.h>
+
+int SCORE = 0;
+
+void error(char *msg)
+{
+    fprintf(stderr, "%s: %s\n", msg, strerror(errno));
+    exit(2);
+}
+
+int catch_signal(int sig, void (*func)(int))
+{
+    struct sigaction action;
+    action.sa_handler = func;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = 0;
+    return sigaction(sig, &action, NULL);
+}
+
+void show_score()
+{
+    printf("\nThis is your score: %i\n", SCORE);
+}
+
+void times_up(int sig)
+{
+    printf("\n-----TIMES UP-----\n");
+    raise(SIGINT);
+}
+
+void user_quit(int sig)
+{
+    show_score();
+    exit(0);
+}
 
 int main()
 {
-    int tunnel[2];
-    char url[100];
-    if (pipe(tunnel) == -1)
-        error("Create pipe error");
+    srand(time(0));
+    char repeat[2];
 
-    char *msg[] = {"http://www.google.com", "http://www.apple.com"};
+    if (catch_signal(SIGINT, user_quit) == -1) 
+        error("Cannot handle user interruption");
+    if (catch_signal(SIGALRM, times_up) == -1)
+        error("Cannot hangle alarm signal");
 
-    pid_t pid = fork();
+    while (1) {
+        int a = random() % 11;
+        int b = random() % 11;
+        int ans;
 
-    if (pid == -1)
-        error("Unseccessful fork");
-
-    if (!pid) {
-        close(tunnel[0]);
-        dup2(tunnel[1], 1);
-    } else {
-        close(tunnel[1]);
-        dup2(tunnel[0], 0);
+        printf("%i x %i = ", a, b);
+        alarm(5);
+        scanf("%i", &ans);
+        if (ans == a*b) {
+            SCORE ++;
+            printf("Excellent! You got one point and score %i\n", SCORE);
+        } else
+            printf("Ooops! Try again. You've got %i scores\n", SCORE);
     }
 
-    for (int i=0; i<2; i++) {
-        if (!pid) {
-            printf("%s\n", msg[i]);
-        } else {
-            char command[105];
-            fgets(url, 100, stdin);
-            sprintf(command, "%s %s", "open", url);
-            system(command);
-        }
-    }
 
     return 0;
 }
