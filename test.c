@@ -1,70 +1,46 @@
 #include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <time.h>
-#include <signal.h>
+#include <arpa/inet.h>
 #include <errno.h>
 #include <string.h>
-
-int SCORE = 0;
+#include <sys/socket.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 void error(char *msg)
 {
     fprintf(stderr, "%s: %s\n", msg, strerror(errno));
-    exit(2);
+    exit(1);
 }
 
-int catch_signal(int sig, void (*func)(int))
+int main ()
 {
-    struct sigaction action;
-    action.sa_handler = func;
-    sigemptyset(&action.sa_mask);
-    action.sa_flags = 0;
-    return sigaction(sig, &action, NULL);
-}
+    char *advice[] = {
+        "Take smaller bites\r\n", 
+        "Go for the tight jeans. No they do NOT make you look fat.\r\n",
+        "One word: inappropriate\r\n",
+        "Just for today, be honest. Tell your boss what your *really* think\r\n",
+        "You might want to rethink that haircut\r\n"
+    };
+    int listener_d = socket(PF_INET, SOCK_STREAM, 0);
 
-void show_score()
-{
-    printf("\nThis is your score: %i\n", SCORE);
-}
-
-void times_up(int sig)
-{
-    printf("\n-----TIMES UP-----\n");
-    raise(SIGINT);
-}
-
-void user_quit(int sig)
-{
-    show_score();
-    exit(0);
-}
-
-int main()
-{
-    srand(time(0));
-    char repeat[2];
-
-    if (catch_signal(SIGINT, user_quit) == -1) 
-        error("Cannot handle user interruption");
-    if (catch_signal(SIGALRM, times_up) == -1)
-        error("Cannot hangle alarm signal");
-
+    struct sockaddr_in name;
+    name.sin_family = PF_INET;
+    name.sin_port = (in_port_t)htons(30000);
+    name.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (bind(listener_d, (struct sockaddr *)&name, sizeof(name)) == -1)
+        error("Bind failed");
+    if (listen(listener_d, 10) == -1)
+        error("Listen failed");
+    puts("Waiting for connection");
     while (1) {
-        int a = random() % 11;
-        int b = random() % 11;
-        int ans;
-
-        printf("%i x %i = ", a, b);
-        alarm(5);
-        scanf("%i", &ans);
-        if (ans == a*b) {
-            SCORE ++;
-            printf("Excellent! You got one point and score %i\n", SCORE);
-        } else
-            printf("Ooops! Try again. You've got %i scores\n", SCORE);
+        struct sockaddr_storage client_addr;
+        unsigned int address_size = sizeof(client_addr);
+        int connect_d = accept(listener_d, (struct sockaddr *)&client_addr, &address_size);
+        char *msg = advice[rand() % 5];
+        if (send(connect_d, msg, strlen(msg), 0) == -1)
+            error("Send message failed");
+        close(connect_d);
     }
-
 
     return 0;
 }
